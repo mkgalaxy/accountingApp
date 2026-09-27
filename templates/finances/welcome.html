@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خوش آمدید – حسابداری MK</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{% static 'finances/css/welcome.css' %}">
+</head>
+<body>
+
+    <div class="welcome-container">
+        <!-- لوگو با حرکت زنده و پویا -->
+        <img src="{% static 'finances/images/logo.png' %}" alt="لوگو MK" class="logo-img">
+
+        <!-- مکان نمایش متن‌های تایپی -->
+        <h1 class="welcome-title" id="title"></h1>
+        <p class="welcome-subtitle" id="subtitle"></p>
+        <div class="welcome-footer" id="footer"></div>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            const titleEl = document.getElementById('title');
+            const subtitleEl = document.getElementById('subtitle');
+            const footerEl = document.getElementById('footer');
+
+            const titleText = "به برنامه حسابداری MK خوش آمدید";
+            const subtitleText = "مدیریت مالی هوشمند، سریع و مدرن کسب‌وکار شما";
+            const footerText = "𝓶𝓴𝓪𝓬𝓬𝓸𝓾𝓷𝓽𝓲𝓷𝓰𝓪𝓹𝓹 :)"
+
+            // ۱. تایپ آرام و حرف‌به‌حرف متن اول
+            let i = 0;
+            function typeTitle() {
+                if (i < titleText.length) {
+                    titleEl.textContent += titleText.charAt(i);
+                    i++;
+                    setTimeout(typeTitle, 80);
+                } else {
+                    setTimeout(typeSubtitle, 400);
+                }
+            }
+
+            // ۲. تایپ آرام متن دوم
+            let j = 0;
+            function typeSubtitle() {
+                if (j < subtitleText.length) {
+                    subtitleEl.textContent += subtitleText.charAt(j);
+                    j++;
+                    setTimeout(typeSubtitle, 65);
+                } else {
+                    setTimeout(typeFooter, 400);
+                }
+            }
+
+            // ۳. تایپ زنجیره‌ای و حرف‌به‌حرف متن پایانی
+            let k = 0;
+            function typeFooter() {
+                if (k < footerText.length) {
+                    footerEl.textContent += footerText.charAt(k);
+                    k++;
+                    setTimeout(typeFooter, 80);
+                } else {
+                    // ۴. پایان کار و انتقال به صفحه لاگین
+                    setTimeout(function() {
+                        window.location.href = "{% url 'login' %}";
+                    }, 1800);
+                }
+            }
+
+            // شروع زنجیره تایپ‌ها پس از لود صفحه
+            setTimeout(typeTitle, 300);
+        });
+    </script>
+</body>
+</html>

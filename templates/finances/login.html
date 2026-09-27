@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود به حسابداری MK</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{% static 'finances/css/login.css' %}">
+</head>
+<body>
+
+    <div class="login-card">
+        <!-- لوگو در بالا -->
+        <img src="{% static 'finances/images/logo.png' %}" alt="لوگو MK" class="login-logo">
+
+        <h1 class="login-title">ورود به سیستم</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            {% if form.errors %}
+                <div class="error-box">
+                    نام کاربری یا رمز عبور اشتباه است.
+                </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="id_username">نام کاربری</label>
+                <div class="input-wrapper">
+                    <input type="text" name="username" id="id_username" class="login-input" placeholder="نام کاربری خود را وارد کنید" required autocomplete="username">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="id_password">رمز عبور</label>
+                <div class="input-wrapper password-wrapper">
+                    <input type="password" name="password" id="id_password" class="login-input" placeholder="••••••••" required autocomplete="current-password">
+                    <button type="button" id="togglePasswordBtn" class="toggle-password" title="نمایش/مخفی کردن رمز عبور">👁️</button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">ورود به حساب کاربری</button>
+        </form>
+    </div>
+
+    <script>
+        const passwordInput = document.getElementById('id_password');
+        const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+
+        togglePasswordBtn.addEventListener('click', function() {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                togglePasswordBtn.textContent = '👁️‍🗨️';
+            } else {
+                passwordInput.type = 'password';
+                togglePasswordBtn.textContent = '👁️';
+            }
+        });
+    </script>
+</body>
+</html>
