@@ -5,6 +5,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="کاربر")
     storeName = models.CharField(max_length=200, verbose_name="نام فروشگاه / شرکت")
     phoneNumber = models.CharField(max_length=15, blank=True, null=True, verbose_name="شماره تماس")
+    avatar = models.ImageField(upload_to='profiles/', blank=True, null=True, verbose_name='تصویر پروفایل')
     def __str__(self):
         return f"{self.storeName} ({self.user.username})"
 #--------------------------------------------------------------------------------------------------

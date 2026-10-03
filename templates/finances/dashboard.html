@@ -1,0 +1,162 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>داشبورد مالی - سیستم حسابداری MK</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{% static 'finances/css/dashboard.css' %}">
+</head>
+<body>
+
+    <!-- هدر اصلی داشبورد -->
+    <header class="dashboard-header">
+        <!-- سمت راست: لوگو و نام اپ -->
+        <div class="header-right">
+            <img src="{% static 'finances/images/logo.png' %}" alt="لوگو MK" class="header-logo">
+            <h1 class="header-title">حسابداری MK</h1>
+        </div>
+
+        <!-- وسط: تب‌های ناوبری -->
+        <nav class="header-tabs">
+            <button class="tab-btn active" onclick="switchTab(event, 'transactions-tab')">لیست تراکنش‌ها</button>
+            <button class="tab-btn" onclick="switchTab(event, 'add-tab')">ثبت تراکنش جدید</button>
+            <button class="tab-btn" onclick="switchTab(event, 'reports-tab')">گزارش‌ها</button>
+            <button class="tab-btn" onclick="switchTab(event, 'profile-tab')">ویرایش پروفایل</button>
+        </nav>
+
+        <!-- سمت چپ: پروفایل حسابدار و دکمه خروج -->
+        <div class="header-left" style="display: flex; align-items: center; gap: 12px;">
+            <!-- تصویر پروفایل یا آواتار حروف اول -->
+            {% if request.user.userprofile.avatar %}
+                <img src="{{ request.user.userprofile.avatar.url }}" alt="پروفایل" style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid #7c3aed; box-shadow: 0 2px 8px rgba(124, 58, 237, 0.2);">
+            {% else %}
+                <div style="width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; box-shadow: 0 2px 8px rgba(124, 58, 237, 0.2);">
+                    {{ request.user.username|slice:":1"|upper }}
+                </div>
+            {% endif %}
+
+            <div class="user-profile-info">
+                <p class="user-name" style="margin: 0; font-weight: 700; font-size: 0.95rem; color: #3b0764;">{{ request.user.username }}</p>
+                <span class="store-badge" style="font-size: 0.75rem; color: #7c3aed; background: #f3e8ff; padding: 2px 8px; border-radius: 6px; font-weight: 600;">
+                    {% if request.user.is_superuser %}مدیر کل سیستم{% else %}{{ request.user.userprofile.store_name|default:"حسابدار" }}{% endif %}
+                </span>
+            </div>
+
+            <a href="{% url 'logout' %}" class="btn-logout" title="خروج از حساب کاربری">خروج</a>
+        </div>
+    </header>
+
+    <!-- محتوای تب‌ها -->
+    <main class="dashboard-container">
+
+        <!-- تب اول: لیست تراکنش‌ها -->
+        <div id="transactions-tab" class="tab-content active">
+            <div class="glass-card">
+                <h2>تراکنش‌های ثبت شده</h2>
+                <p style="color: #6b21a8; font-size: 0.9rem;">در این بخش می‌توانید لیست کامل فروش‌ها، هزینه‌ها و نوع پرداخت‌ها را مشاهده کنید.</p>
+
+                <!-- جدول تراکنش‌ها -->
+                <div style="overflow-x: auto; margin-top: 20px;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: right; font-size: 0.9rem;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #e9d5ff; color: #5b21b6;">
+                                <th style="padding: 12px;">شرح تراکنش</th>
+                                <th style="padding: 12px;">مبلغ (تومان)</th>
+                                <th style="padding: 12px;">نوع</th>
+                                <th style="padding: 12px;">پرداخت</th>
+                                <th style="padding: 12px;">مشتری</th>
+                                <th style="padding: 12px;">تاریخ</th>
+                                {% if request.user.is_superuser %}
+                                <th style="padding: 12px;">کاربر</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tx in transactions %}
+                            <tr style="border-bottom: 1px solid #f3e8ff;">
+                                <td style="padding: 12px; font-weight: 600;">{{ tx.title }}</td>
+                                <td style="padding: 12px; color: {% if tx.transaction_type == 'income' %}#16a34a{% else %}#dc2626{% endif %}; font-weight: 700;">
+                                    {{ tx.amount|floatformat:0 }} تومان
+                                </td>
+                                <td style="padding: 12px;">
+                                    <span style="padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; background: {% if tx.transaction_type == 'income' %}#dcfce7; color: #166534;{% else %}#fee2e2; color: #991b1b;{% endif %}">
+                                        {{ tx.get_transaction_type_display }}
+                                    </span>
+                                </td>
+                                <td style="padding: 12px;">{{ tx.get_payment_method_display }}</td>
+                                <td style="padding: 12px;">{{ tx.customer_name|default:"-" }}</td>
+                                <td style="padding: 12px;">{{ tx.date }}</td>
+                                {% if request.user.is_superuser %}
+                                <td style="padding: 12px; color: #7c3aed; font-weight: 600;">{{ tx.user.username }}</td>
+                                {% endif %}
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 30px; color: #6b21a8;">هنوز هیچ تراکنشی ثبت نشده است.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- تب دوم: ثبت تراکنش جدید -->
+        <div id="add-tab" class="tab-content">
+            <div class="glass-card" style="max-width: 600px; margin: 0 auto;">
+                <h2>ثبت تراکنش جدید</h2>
+                <p style="color: #6b21a8; font-size: 0.9rem; margin-bottom: 20px;">اطلاعات فروش، هزینه یا دریافت و پرداخت را با مشخص کردن نوع آن وارد کنید.</p>
+
+                <form method="POST" action="{% url 'add_transaction' %}">
+                    {% csrf_token %}
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        {{ form.as_p }}
+                        <button type="submit" class="tab-btn active" style="width: 100%; padding: 12px; font-size: 1rem; margin-top: 10px; cursor: pointer;">ثبت تراکنش</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- تب سوم: گزارش‌ها -->
+        <div id="reports-tab" class="tab-content">
+            <div class="glass-card">
+                <h2>گزارش‌های مالی و عملکرد</h2>
+                <p style="color: #6b21a8; font-size: 0.9rem;">این بخش برای تحلیل‌های مالی و آمار تفکیکی در حال آماده‌سازی است.</p>
+            </div>
+        </div>
+
+        <!-- تب چهارم: ویرایش پروفایل -->
+        <div id="profile-tab" class="tab-content">
+            <div class="glass-card" style="max-width: 600px; margin: 0 auto;">
+                <h2>ویرایش مشخصات پروفایل و فروشگاه</h2>
+                <p style="color: #6b21a8; font-size: 0.9rem; margin-bottom: 20px;">می‌توانید تصویر پروفایل، نام فروشگاه یا شماره تماس خود را تغییر دهید.</p>
+
+                <form method="POST" action="{% url 'profile_edit' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        {{ profile_form.as_p }}
+                        <button type="submit" class="tab-btn active" style="width: 100%; padding: 12px; font-size: 1rem; margin-top: 10px; cursor: pointer;">ذخیره تغییرات پروفایل</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- جاوا اسکریپت ساده برای جابجایی بین تب‌ها -->
+    <script>
+        function switchTab(evt, tabId) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>

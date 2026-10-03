@@ -1,5 +1,7 @@
 from django import forms
 from .models import Transaction
+from .models import UserProfile
+#------------------------------------------------------------------------------------------------------
 class TransactionForm(forms.ModelForm):
     class Meta:
         model = Transaction
@@ -12,3 +14,14 @@ class TransactionForm(forms.ModelForm):
             'customerName': forms.TextInput(attrs={'class': 'loginInput', 'placeholder': 'نام مشتری'}),
             'date': forms.DateInput(attrs={'class': 'loginInput', 'type': 'date'}),
         }
+#------------------------------------------------------------------------------------------------------
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['storeName','phoneNumber','avatar']
+        widgets = {
+            'storeName': forms.TextInput(attrs={'class': 'loginInput'}),
+            'phoneNumber': forms.TextInput(attrs={'class': 'loginInput'}),
+            'avatar': forms.FileInput(attrs={'class': 'loginInput'}),
+        }
+#------------------------------------------------------------------------------------------------------

@@ -21,21 +21,21 @@
 
             {% if form.errors %}
                 <div class="error-box">
-                    نام کاربری یا رمز عبور اشتباه است.
+                    نام کاربری یا رمز عبور اشتباه است. لطفاً دوباره تلاش کنید.
                 </div>
             {% endif %}
 
             <div class="form-group">
                 <label for="id_username">نام کاربری</label>
                 <div class="input-wrapper">
-                    <input type="text" name="username" id="id_username" class="login-input" placeholder="نام کاربری خود را وارد کنید" required autocomplete="username">
+                    <input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required id="id_username" class="login-input" placeholder="نام کاربری خود را وارد کنید">
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="id_password">رمز عبور</label>
                 <div class="input-wrapper password-wrapper">
-                    <input type="password" name="password" id="id_password" class="login-input" placeholder="••••••••" required autocomplete="current-password">
+                    <input type="password" name="password" autocomplete="current-password" required id="id_password" class="login-input" placeholder="••••••••">
                     <button type="button" id="togglePasswordBtn" class="toggle-password" title="نمایش/مخفی کردن رمز عبور">👁️</button>
                 </div>
             </div>
